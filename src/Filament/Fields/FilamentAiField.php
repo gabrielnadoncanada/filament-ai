@@ -105,6 +105,7 @@ class FilamentAiField extends Section
                 ->label(__('filament-ai::filament-ai.form.openai_model'))
                 ->options(fn () => $this->disableModelSelection ? [$this->defaultModel => $this->defaultModel] : FilamentAi::chat()->listModels())
                 ->disabled($this->disableModelSelection)
+                ->default($this->defaultModel)
                 ->required(),
 
             Forms\Components\Textarea::make('context_data')
