@@ -12,7 +12,7 @@ class FilamentAi
 
     public array $eloquent_model = [];
 
-    public string $openfilament_ai;
+    public string $openai;
 
     public $system_prompt;
 
@@ -26,7 +26,7 @@ class FilamentAi
         $this->openai_client = OpenAI::client(config('filament-ai.openai_api_key'));
 
         // Inizializza il modello OpenAI
-        $this->openfilament_ai = config('filament-ai.default_openfilament_ai');
+        $this->openai = config('filament-ai.default_openai');
     }
 
     public static function chat(): self
@@ -51,9 +51,9 @@ class FilamentAi
     }
 
     // Metodo per imdevlense il modello OpenAI
-    public function openfilament_ai(string $model): self
+    public function openai(string $model): self
     {
-        $this->openfilament_ai = $model;
+        $this->openai = $model;
 
         return $this;
     }
@@ -89,7 +89,7 @@ class FilamentAi
     {
         // Preparazione del payload
         $payload = [
-            'model' => $this->openfilament_ai,
+            'model' => $this->openai,
             'messages' => [],
         ];
 

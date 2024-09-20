@@ -47,21 +47,21 @@ class FilamentAiPage extends \Filament\Pages\Page
     public function mount(): void
     {
         $this->form->fill([
-            'filament_ai' => config('filament-ai.default_openfilament_ai'),
+            'filament_ai' => config('filament-ai.default_openai'),
         ]);
     }
 
     public function form(Form $form): Form
     {
 
-        $default_openfilament_ai = config('filament-ai.default_openfilament_ai');
+        $default_openai = config('filament-ai.default_openai');
         $eloquent_model = config('filament-ai.eloquent_model');
         $field_label = config('filament-ai.field_label');
         $field_id = config('filament-ai.field_id');
         $predefined_prompts_actions = $this->predefinedPromptsToActions(config('filament-ai.predefined_prompts', []));
         $selected_columns = config('filament-ai.selected_columns');
 
-        $disabled_openfilament_ai_selection = config('filament-ai.disable_openfilament_ai_selection');
+        $disabled_openai_selection = config('filament-ai.disable_openai_selection');
 
         return $form
             ->schema([
@@ -79,14 +79,14 @@ class FilamentAiPage extends \Filament\Pages\Page
 
                 Forms\Components\Select::make('filament_ai')
                     ->label(__('filament-ai::filament-ai.form.filament_ai'))
-                    ->options(function () use ($default_openfilament_ai, $disabled_openfilament_ai_selection) {
-                        if ($disabled_openfilament_ai_selection) {
-                            return [$default_openfilament_ai => $default_openfilament_ai];
+                    ->options(function () use ($default_openai, $disabled_openai_selection) {
+                        if ($disabled_openai_selection) {
+                            return [$default_openai => $default_openai];
                         }
 
                         return \Devlense\FilamentAi\FilamentAi::chat()->listModels();
                     })
-                    ->disabled($disabled_openfilament_ai_selection)
+                    ->disabled($disabled_openai_selection)
                     ->required(),
 
                 Forms\Components\Textarea::make('context_data')
@@ -146,8 +146,8 @@ class FilamentAiPage extends \Filament\Pages\Page
         $data = $this->form->getState();
 
         // Se è disabilitata la selezione del modello, sempre quello di default
-        if (config('filament-ai.disable_openfilament_ai_selection')) {
-            $data['filament_ai'] = config('filament-ai.default_openfilament_ai');
+        if (config('filament-ai.disable_openai_selection')) {
+            $data['filament_ai'] = config('filament-ai.default_openai');
         }
 
         $system_prompt = config('filament-ai.system_prompt');

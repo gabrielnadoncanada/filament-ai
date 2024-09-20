@@ -2,12 +2,18 @@
 
 namespace Devlense\FilamentAi\Filament\Fields;
 
+use Filament\Forms\Components\Section;
+
 use Filament\Forms\Components\Field;
 use Filament\Forms;
 use Closure;
 use Devlense\FilamentAi\FilamentAi;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Infolists\Concerns\InteractsWithInfolists;
 
-class FilamentAiField extends Field
+class FilamentAiField extends Section
 {
     protected string $view = 'filament-ai::components.filament-ai-field';
     private Closure|bool $disableModelSelection;
@@ -127,7 +133,7 @@ class FilamentAiField extends Field
 
     protected function configureActions(): void
     {
-        $this->actions([
+        $this->footerActions([
             Forms\Components\Actions\Action::make('generate')
                 ->label(__('filament-ai::filament-ai.form.submit_prompt'))
                 ->icon('heroicon-o-sparkles')
