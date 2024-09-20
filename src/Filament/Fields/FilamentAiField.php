@@ -95,7 +95,7 @@ class FilamentAiField extends Section
                 ->label(__('filament-ai::filament-ai.form.item'))
                 ->searchable()
                 ->getSearchResultsUsing(fn (string $search) => $this->eloquentModel::where($this->fieldLabel, 'like', "%{$search}%")->limit(50)->pluck($this->fieldLabel, $this->fieldId)->toArray())
-                ->afterStateUpdated(function (Closure $set, $state)  {
+                ->afterStateUpdated(function (Forms\Set $set, $state)  {
                     $data = $this->eloquentModel::select($this->selectedColumns)->where($this->fieldId, $state)->first();
                     $set('context_data', $data->toJson(JSON_PRETTY_PRINT));
                 })
@@ -145,7 +145,7 @@ class FilamentAiField extends Section
     {
         return array_map(fn ($prompt) => Forms\Components\Actions\Action::make($prompt['name'])
             ->label($prompt['name'])
-            ->action(fn (Closure $set) => $set('prompt', $prompt['prompt'])), $prompts);
+            ->action(fn (Forms\Set $set) => $set('prompt', $prompt['prompt'])), $prompts);
     }
 
     public function submitPrompt(): void
