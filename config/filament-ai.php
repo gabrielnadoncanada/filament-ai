@@ -6,10 +6,10 @@ return [
     'openai_api_key' => env('OPENAI_API_KEY', ''),
 
     // Default OpenAI Model (refer to https://platform.openai.com/docs/models)
-    'default_openfilament_ai' => 'gpt-3.5-turbo-1106',
+    'default_openai' => 'gpt-3.5-turbo-1106',
 
     // Disable selecting OpenAI Model
-    'disable_openfilament_ai_selection' => false,
+    'disable_openai_selection' => false,
 
     // Slug for the Filament Ai page
     'slug' => 'filament-ai',
@@ -23,6 +23,7 @@ return [
         'name',
         'email',
     ],
+
     'field_label' => 'name', // Field to use as label
     'field_id' => 'id', // Field to use as ID
 
