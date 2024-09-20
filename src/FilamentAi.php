@@ -2,68 +2,62 @@
 
 namespace Devlense\FilamentAi;
 
-use Filament\Notifications\Notification;
-use Illuminate\Support\Str;
-use OpenAI;
+use Devlense\FilamentAi\Contracts\AiProviderInterface;
 
 class FilamentAi
 {
-    public OpenAI\Client $openai_client;
+    protected AiProviderInterface $aiProvider;
+    protected string $provider;
 
     public array $eloquent_model = [];
+    public string $system_prompt;
+    public string $user_prompt;
+    public array $function;
 
-    public string $openai;
-
-    public $system_prompt;
-
-    public $user_prompt;
-
-    public $function;
-
-    public function __construct()
+    public function __construct(string $provider = null)
     {
-        // Inizializza il client OpenAI
-        $this->openai_client = OpenAI::client(config('filament-ai.openai_api_key'));
-
-        // Inizializza il modello OpenAI
-        $this->openai = config('filament-ai.default_openai');
+        $this->provider = $provider ?? config('filament-ai.default_provider', 'openai');
+        $this->aiProvider = AiProviderFactory::make($this->provider);
     }
 
-    public static function chat(): self
+    /**
+     * Initialize a chat session.
+     */
+    public static function chat(string $provider = null): self
     {
-        return new self();
+        return new self($provider);
     }
 
-    // Metodo per imdevlense il prompt del sistema
-    public function system(string $system_prompt): self
+    /**
+     * Set the AI provider (OpenAI, Azure, etc.).
+     */
+    public function setProvider(string $provider): self
     {
-        $this->system_prompt = $system_prompt;
-
-        return $this;
-    }
-
-    // Metodo per imdevlense una funzione
-    public function function(array $function): self
-    {
-        $this->function = $function;
-
-        return $this;
-    }
-
-    // Metodo per imdevlense il modello OpenAI
-    public function openai(string $model): self
-    {
-        $this->openai = $model;
-
+        $this->provider = $provider;
+        $this->aiProvider = AiProviderFactory::make($provider);
         return $this;
     }
 
     /**
-     * Set the Eloquent model to use.
-     *
-     * @param  string  $eloquent_model Nome della classe del modello Eloquent da utilizzare
-     * @param  int  $id ID del record da utilizzare
-     * @param  array  $select_data Dati da selezionare
+     * Set the system prompt.
+     */
+    public function system(string $system_prompt): self
+    {
+        $this->system_prompt = $system_prompt;
+        return $this;
+    }
+
+    /**
+     * Set functions to pass to the AI provider.
+     */
+    public function function(array $function): self
+    {
+        $this->function = $function;
+        return $this;
+    }
+
+    /**
+     * Set Eloquent model to use as context.
      */
     public function model(string $eloquent_model, int $id, array $select_data = ['*']): self
     {
@@ -72,28 +66,27 @@ class FilamentAi
             'id' => $id,
             'select_data' => $select_data,
         ];
-
         return $this;
     }
 
-    // Metodo chat modificato per supportare catenazione
+    /**
+     * Set the user prompt.
+     */
     public function prompt(string $prompt): self
     {
         $this->user_prompt = $prompt;
-
         return $this;
     }
 
-    // Metodo per eseguire la richiesta
-    public function send()
+    /**
+     * Build the payload for the AI request.
+     */
+    protected function buildPayload(): array
     {
-        // Preparazione del payload
         $payload = [
-            'model' => $this->openai,
             'messages' => [],
         ];
 
-        // Se è impostato il prompt del sistema
         if ($this->system_prompt) {
             $payload['messages'][] = [
                 'role' => 'system',
@@ -101,27 +94,19 @@ class FilamentAi
             ];
         }
 
-        // Se è impostata la funzione
-        if ($this->function) {
-            $payload['functions'] = [$this->function];
-        }
-
-        if (! empty($this->eloquent_model)) {
+        if (!empty($this->eloquent_model)) {
             $model = $this->eloquent_model['class'];
             $id = $this->eloquent_model['id'];
             $select_data = $this->eloquent_model['select_data'];
 
-            // Seleziona i dati dal modello Eloquent
             $model_data = $model::select($select_data)->where('id', $id)->first()->toJson(JSON_PRETTY_PRINT);
 
-            // aggiungi i dati del modello al payload
             $payload['messages'][] = [
                 'role' => 'system',
-                'content' => "Consider the data at the end of this message as context and answer the questions I will ask you later. ``` $model_data ```",
+                'content' => "Consider the following data: ``` $model_data ```",
             ];
         }
 
-        // Se è impostato il prompt dell'utente
         if ($this->user_prompt) {
             $payload['messages'][] = [
                 'role' => 'user',
@@ -129,51 +114,29 @@ class FilamentAi
             ];
         }
 
-        // Esegui la richiesta al servizio OpenAI
-        try {
-            $response = $this->openai_client->chat()->create($payload);
-
-            // Check if there's a function call response
-            if (isset($response->choices[0]->message->functionCall->arguments)) {
-                return json_decode($response->choices[0]->message->functionCall->arguments);
-            }
-
-            // If not, then return the standard message content
-            return $response->choices[0]->message->content
-                ? json_decode($response->choices[0]->message->content)
-                : null;
-        } catch (\Exception $e) {
-            $this->handleException($e);
-
-            return null;
+        if (!empty($this->function)) {
+            $payload['functions'] = [$this->function];
         }
 
+        return $payload;
     }
 
     /**
-     * Return list of models from OpenAI API. Only GPT* models are returned.
+     * Send the chat request to the selected AI provider.
      */
-    public function listModels(): array
+    public function send()
     {
-        return collect($this->openai_client->models()->list()->data)
-            ->sortByDesc('created')
-            ->pluck('id')
-            ->filter(fn ($id) => Str::startsWith($id, 'gpt-'))
-            ->mapWithKeys(function ($id) {
-                return [$id => $id];
-            })
-            ->toArray();
+        $payload = $this->buildPayload();
+        return $this->aiProvider->chat($payload);
     }
 
     /**
-     * Stream response from OpenAI API.
+     * Stream a chat response from the selected AI provider.
      */
-    public function stream(
-        string $prompt,
-        string $system_prompt,
-        string $model_data_json,
-        string $model = 'gpt-3.5-turbo'
-    ): ?object {
+    public function stream(string $prompt, string $system_prompt, string $model_data_json, string $model = null)
+    {
+        $model = $model ?? config('filament-ai.default_model', 'gpt-3.5-turbo');
+
         $payload = [
             'model' => $model,
             'messages' => [
@@ -188,24 +151,24 @@ class FilamentAi
             ],
         ];
 
-        try {
-
-            return $this->openai_client->chat()->createStreamed($payload);
-
-        } catch (\Exception $e) {
-            $this->handleException($e);
-
-            return null;
-        }
+        return $this->aiProvider->stream($payload);
     }
 
     /**
-     * Handle exception from OpenAI API call.
+     * Get a list of available AI models from the provider.
+     */
+    public function listModels(): array
+    {
+        return $this->aiProvider->listModels();
+    }
+
+    /**
+     * Handle exception from AI provider.
      */
     protected function handleException(\Exception $e): void
     {
-        Notification::make()
-            ->title('OpenAI Error:')
+        \Filament\Notifications\Notification::make()
+            ->title('AI Error:')
             ->body($e->getMessage())
             ->danger()
             ->persistent()

@@ -2,19 +2,18 @@
 
 namespace Devlense\FilamentAi\Filament\Fields;
 
+use Filament\Forms\Components\Contracts\HasAffixActions;
 use Filament\Forms\Components\Section;
 
 use Filament\Forms\Components\Field;
 use Filament\Forms;
 use Closure;
 use Devlense\FilamentAi\FilamentAi;
-use Filament\Actions\Concerns\InteractsWithActions;
-use Filament\Actions\Contracts\HasActions;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Infolists\Concerns\InteractsWithInfolists;
+use Filament\Forms\Components\Concerns\HasActions;
 
-class FilamentAiField extends Section
+class FilamentAiField extends Field implements HasAffixActions
 {
+    use HasActions;
     private Closure|bool $disableModelSelection;
     private Closure|string $eloquentModel;
     private string|Closure $defaultModel;
