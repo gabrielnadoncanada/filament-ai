@@ -109,7 +109,7 @@ class FilamentAiField extends Section
 
             Forms\Components\Textarea::make('context_data')
                 ->label(__('filament-ai::filament-ai.form.context_data'))
-                ->hidden(fn (Closure $get) => ! $get('item'))
+                ->hidden(fn (Forms\Get $get) => ! $get('item'))
                 ->rows(5)
                 ->columnSpanFull()
                 ->required(),
