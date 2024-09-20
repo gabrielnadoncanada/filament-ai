@@ -1,6 +1,6 @@
 <?php
 
-namespace Devlense\FilamentAi\Forms\Components;
+namespace Devlense\FilamentAi\Filament\Fields;
 
 use Filament\Forms\Components\Field;
 use Filament\Forms;
