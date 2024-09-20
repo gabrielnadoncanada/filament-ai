@@ -90,8 +90,8 @@ class FilamentAiField extends Field
                 ->label(__('filament-ai::filament-ai.form.item'))
                 ->searchable()
                 ->getSearchResultsUsing(fn (string $search) => $this->eloquentModel::where($this->fieldLabel, 'like', "%{$search}%")->limit(50)->pluck($this->fieldLabel, $this->fieldId)->toArray())
-                ->afterStateUpdated(function (Closure $set, $state) use ($selectedColumns, $fieldId) {
-                    $data = $this->eloquentModel::select($selectedColumns)->where($fieldId, $state)->first();
+                ->afterStateUpdated(function (Closure $set, $state)  {
+                    $data = $this->eloquentModel::select($this->selectedColumns)->where($this->fieldId, $state)->first();
                     $set('context_data', $data->toJson(JSON_PRETTY_PRINT));
                 })
                 ->required(),
