@@ -16,14 +16,15 @@ return [
 
     // Filament Navigation Group (refer to translation file for label or disable it)
     'use_navigation_group' => true,
-
+    'item_types' => [
+        'user' => \App\Models\User::class,
+    ],
     // Model Settings
     'eloquent_model' => \App\Models\User::class, // Laravel model to use
     'selected_columns' => [ // Selected columns from the model
         'name',
         'email',
     ],
-
     'field_label' => 'name', // Field to use as label
     'field_id' => 'id', // Field to use as ID
 
