@@ -1,16 +1,16 @@
 <?php
 
-namespace Devlense\ModelAi;
+namespace Devlense\FilamentAi;
 
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
-class ModelAiServiceProvider extends PackageServiceProvider
+class FilamentAiServiceProvider extends PackageServiceProvider
 {
-    public static string $name = 'filament-model-ai';
+    public static string $name = 'filament-ai';
 
-    public static string $viewNamespace = 'filament-model-ai';
+    public static string $viewNamespace = 'filament-ai';
 
     public function configurePackage(Package $package): void
     {
@@ -20,7 +20,7 @@ class ModelAiServiceProvider extends PackageServiceProvider
          * More info: https://github.com/spatie/laravel-package-tools
          */
         $package->name(static::$name)
-            ->hasConfigFile('model-ai')
+            ->hasConfigFile('filament-ai')
             ->hasTranslations()
             ->hasViews(static::$viewNamespace)
             ->hasInstallCommand(function (InstallCommand $command) {
@@ -28,7 +28,7 @@ class ModelAiServiceProvider extends PackageServiceProvider
                     ->publishConfigFile()
                     ->publishMigrations()
                     ->askToRunMigrations()
-                    ->askToStarRepoOnGitHub('devlense/filament-model-ai');
+                    ->askToStarRepoOnGitHub('devlense/filament-ai');
             });
     }
 }

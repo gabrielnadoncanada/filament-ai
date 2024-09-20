@@ -1,18 +1,18 @@
 <?php
 
-// Configuration for Devlense/ModelAi
+// Configuration for Devlense/FilamentAi
 return [
     // OpenAI API Key
     'openai_api_key' => env('OPENAI_API_KEY', ''),
 
     // Default OpenAI Model (refer to https://platform.openai.com/docs/models)
-    'default_openai_model' => 'gpt-3.5-turbo-1106',
+    'default_openfilament_ai' => 'gpt-3.5-turbo-1106',
 
     // Disable selecting OpenAI Model
-    'disable_openai_model_selection' => false,
+    'disable_openfilament_ai_selection' => false,
 
-    // Slug for the Model AI page
-    'slug' => 'model-ai',
+    // Slug for the Filament Ai page
+    'slug' => 'filament-ai',
 
     // Filament Navigation Group (refer to translation file for label or disable it)
     'use_navigation_group' => true,

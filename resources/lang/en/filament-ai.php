@@ -1,12 +1,12 @@
 <?php
 
-// translations for Devlense/ModelAi
+// translations for Devlense/FilamentAi
 return [
-    'title' => 'Model AI',
+    'title' => 'Filament Ai',
     'navigation_group' => 'AI',
     'form' => [
         'item' => 'Item',
-        'ai_model' => 'AI Model',
+        'filament_ai' => 'AI Filament',
         'context_data' => 'Context Data',
         'prompt' => 'Prompt',
         'prompt_placeholder' => 'Write your prompt here...',

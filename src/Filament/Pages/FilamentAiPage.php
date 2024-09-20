@@ -1,12 +1,12 @@
 <?php
 
-namespace Devlense\ModelAi\Filament\Pages;
+namespace Devlense\FilamentAi\Filament\Pages;
 
 use Filament\Forms;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Form;
 
-class ModelAiPage extends \Filament\Pages\Page
+class FilamentAiPage extends \Filament\Pages\Page
 {
     use InteractsWithForms;
 
@@ -14,27 +14,27 @@ class ModelAiPage extends \Filament\Pages\Page
 
     public static function getSlug(): string
     {
-        return config('model-ai.slug');
+        return config('filament-ai.slug');
     }
 
     public function getTitle(): string | \Illuminate\Contracts\Support\Htmlable
     {
-        return __('filament-model-ai::model-ai.title');
+        return __('filament-ai::filament-ai.title');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('filament-model-ai::model-ai.title');
+        return __('filament-ai::filament-ai.title');
     }
 
     public static function getNavigationGroup(): ?string
     {
-        return config('model-ai.use_navigation_group') ? __('filament-model-ai::model-ai.navigation_group') : null;
+        return config('filament-ai.use_navigation_group') ? __('filament-ai::filament-ai.navigation_group') : null;
     }
 
     protected static ?string $navigationIcon = 'heroicon-o-sparkles';
 
-    protected static string $view = 'filament-model-ai::filament.pages.model-ai';
+    protected static string $view = 'filament-ai::filament.pages.filament-ai';
 
     private array $selected_columns;
 
@@ -47,27 +47,27 @@ class ModelAiPage extends \Filament\Pages\Page
     public function mount(): void
     {
         $this->form->fill([
-            'ai_model' => config('model-ai.default_openai_model'),
+            'filament_ai' => config('filament-ai.default_openfilament_ai'),
         ]);
     }
 
     public function form(Form $form): Form
     {
 
-        $default_openai_model = config('model-ai.default_openai_model');
-        $eloquent_model = config('model-ai.eloquent_model');
-        $field_label = config('model-ai.field_label');
-        $field_id = config('model-ai.field_id');
-        $predefined_prompts_actions = $this->predefinedPromptsToActions(config('model-ai.predefined_prompts', []));
-        $selected_columns = config('model-ai.selected_columns');
+        $default_openfilament_ai = config('filament-ai.default_openfilament_ai');
+        $eloquent_model = config('filament-ai.eloquent_model');
+        $field_label = config('filament-ai.field_label');
+        $field_id = config('filament-ai.field_id');
+        $predefined_prompts_actions = $this->predefinedPromptsToActions(config('filament-ai.predefined_prompts', []));
+        $selected_columns = config('filament-ai.selected_columns');
 
-        $disabled_openai_model_selection = config('model-ai.disable_openai_model_selection');
+        $disabled_openfilament_ai_selection = config('filament-ai.disable_openfilament_ai_selection');
 
         return $form
             ->schema([
 
                 Forms\Components\Select::make('item')
-                    ->label(__('filament-model-ai::model-ai.form.item'))
+                    ->label(__('filament-ai::filament-ai.form.item'))
                     ->live(false, 500)
                     ->searchable()
                     ->getSearchResultsUsing(fn (string $search): array => $eloquent_model::where($field_label, 'like', "%{$search}%")->limit(50)->pluck($field_label, $field_id)->toArray())
@@ -77,35 +77,35 @@ class ModelAiPage extends \Filament\Pages\Page
                     })
                     ->required(),
 
-                Forms\Components\Select::make('ai_model')
-                    ->label(__('filament-model-ai::model-ai.form.ai_model'))
-                    ->options(function () use ($default_openai_model, $disabled_openai_model_selection) {
-                        if ($disabled_openai_model_selection) {
-                            return [$default_openai_model => $default_openai_model];
+                Forms\Components\Select::make('filament_ai')
+                    ->label(__('filament-ai::filament-ai.form.filament_ai'))
+                    ->options(function () use ($default_openfilament_ai, $disabled_openfilament_ai_selection) {
+                        if ($disabled_openfilament_ai_selection) {
+                            return [$default_openfilament_ai => $default_openfilament_ai];
                         }
 
-                        return \Devlense\ModelAi\ModelAi::chat()->listModels();
+                        return \Devlense\FilamentAi\FilamentAi::chat()->listModels();
                     })
-                    ->disabled($disabled_openai_model_selection)
+                    ->disabled($disabled_openfilament_ai_selection)
                     ->required(),
 
                 Forms\Components\Textarea::make('context_data')
-                    ->label(__('filament-model-ai::model-ai.form.context_data'))
+                    ->label(__('filament-ai::filament-ai.form.context_data'))
                     ->hidden(fn (Forms\Get $get) => ! $get('item'))
                     ->rows(5)
                     ->columnSpanFull()
                     ->required(),
 
                 Forms\Components\Textarea::make('prompt')
-                    ->label(__('filament-model-ai::model-ai.form.prompt'))
+                    ->label(__('filament-ai::filament-ai.form.prompt'))
                     ->rows(3)
-                    ->placeholder(__('filament-model-ai::model-ai.form.prompt_placeholder'))
+                    ->placeholder(__('filament-ai::filament-ai.form.prompt_placeholder'))
                     ->live()
                     ->required()
-                    ->helperText(__('filament-model-ai::model-ai.form.prompt_helper_text'))
+                    ->helperText(__('filament-ai::filament-ai.form.prompt_helper_text'))
                     ->columnSpanFull(),
 
-                Forms\Components\Fieldset::make(__('filament-model-ai::model-ai.form.predefined_prompts_fieldset'))
+                Forms\Components\Fieldset::make(__('filament-ai::filament-ai.form.predefined_prompts_fieldset'))
                     ->hidden(count($predefined_prompts_actions) == 0)
                     ->schema([
                         Forms\Components\Actions::make($predefined_prompts_actions)->columnSpanFull(),
@@ -146,17 +146,17 @@ class ModelAiPage extends \Filament\Pages\Page
         $data = $this->form->getState();
 
         // Se è disabilitata la selezione del modello, sempre quello di default
-        if (config('model-ai.disable_openai_model_selection')) {
-            $data['ai_model'] = config('model-ai.default_openai_model');
+        if (config('filament-ai.disable_openfilament_ai_selection')) {
+            $data['filament_ai'] = config('filament-ai.default_openfilament_ai');
         }
 
-        $system_prompt = config('model-ai.system_prompt');
+        $system_prompt = config('filament-ai.system_prompt');
 
-        $stream = \Devlense\ModelAi\ModelAi::chat()->stream(
+        $stream = \Devlense\FilamentAi\FilamentAi::chat()->stream(
             $data['prompt'],
             $system_prompt,
             $data['context_data'],
-            $data['ai_model'],
+            $data['filament_ai'],
         );
 
         $this->ai_response = '';
@@ -185,7 +185,7 @@ class ModelAiPage extends \Filament\Pages\Page
     {
         return [
             Forms\Components\Actions\Action::make('generate')
-                ->label(__('filament-model-ai::model-ai.form.submit_prompt'))
+                ->label(__('filament-ai::filament-ai.form.submit_prompt'))
                 ->icon('heroicon-o-sparkles')
                 ->action('submitPrompt'),
         ];

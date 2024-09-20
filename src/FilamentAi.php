@@ -1,18 +1,18 @@
 <?php
 
-namespace Devlense\ModelAi;
+namespace Devlense\FilamentAi;
 
 use Filament\Notifications\Notification;
 use Illuminate\Support\Str;
 use OpenAI;
 
-class ModelAi
+class FilamentAi
 {
     public OpenAI\Client $openai_client;
 
     public array $eloquent_model = [];
 
-    public string $openai_model;
+    public string $openfilament_ai;
 
     public $system_prompt;
 
@@ -23,10 +23,10 @@ class ModelAi
     public function __construct()
     {
         // Inizializza il client OpenAI
-        $this->openai_client = OpenAI::client(config('model-ai.openai_api_key'));
+        $this->openai_client = OpenAI::client(config('filament-ai.openai_api_key'));
 
         // Inizializza il modello OpenAI
-        $this->openai_model = config('model-ai.default_openai_model');
+        $this->openfilament_ai = config('filament-ai.default_openfilament_ai');
     }
 
     public static function chat(): self
@@ -51,9 +51,9 @@ class ModelAi
     }
 
     // Metodo per imdevlense il modello OpenAI
-    public function openai_model(string $model): self
+    public function openfilament_ai(string $model): self
     {
-        $this->openai_model = $model;
+        $this->openfilament_ai = $model;
 
         return $this;
     }
@@ -89,7 +89,7 @@ class ModelAi
     {
         // Preparazione del payload
         $payload = [
-            'model' => $this->openai_model,
+            'model' => $this->openfilament_ai,
             'messages' => [],
         ];
 

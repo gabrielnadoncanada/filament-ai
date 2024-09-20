@@ -1,13 +1,13 @@
 <?php
 
-namespace Devlense\ModelAi\Testing;
+namespace Devlense\FilamentAi\Testing;
 
 use Livewire\Features\SupportTesting\Testable;
 
 /**
  * @mixin Testable
  */
-class TestsModelAi
+class TestsFilamentAi
 {
     //
 }

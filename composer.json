@@ -1,5 +1,5 @@
 {
-    "name": "devlense/filament-model-ai",
+    "name": "devlense/filament-ai",
     "description": "Integrate artificial intelligence into FilamentPHP, leveraging your Eloquent Model data as knowledge.",
     "type": "library",
     "keywords": [
@@ -8,10 +8,10 @@
         "openai",
         "plugin"
     ],
-    "homepage": "https://github.com/devlense/filament-model-ai",
+    "homepage": "https://github.com/devlense/filament-ai",
     "support": {
-        "issues": "https://github.com/devlense/filament-model-ai/issues",
-        "source": "https://github.com/devlense/filament-model-ai"
+        "issues": "https://github.com/devlense/filament-ai/issues",
+        "source": "https://github.com/devlense/filament-ai"
     },
     "license": "MIT",
     "authors": [
@@ -43,13 +43,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Devlense\\ModelAi\\": "src/",
-            "Devlense\\ModelAi\\Database\\Factories\\": "database/factories/"
+            "Devlense\\FilamentAi\\": "src/",
+            "Devlense\\FilamentAi\\Database\\Factories\\": "database/factories/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Devlense\\ModelAi\\Tests\\": "tests/"
+            "Devlense\\FilamentAi\\Tests\\": "tests/"
         }
     },
     "scripts": {
@@ -70,10 +70,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Devlense\\ModelAi\\ModelAiServiceProvider"
+                "Devlense\\FilamentAi\\FilamentAiServiceProvider"
             ],
             "aliases": {
-                "ModelAi": "Devlense\\ModelAi\\Facades\\ModelAi"
+                "FilamentAi": "Devlense\\FilamentAi\\Facades\\FilamentAi"
             }
         }
     },

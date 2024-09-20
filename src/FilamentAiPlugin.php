@@ -1,11 +1,11 @@
 <?php
 
-namespace Devlense\ModelAi;
+namespace Devlense\FilamentAi;
 
 use Filament\Contracts\Plugin;
 use Filament\Panel;
 
-class ModelAiPlugin implements Plugin
+class FilamentAiPlugin implements Plugin
 {
     public function boot(Panel $panel): void
     {
@@ -13,13 +13,13 @@ class ModelAiPlugin implements Plugin
 
     public function getId(): string
     {
-        return 'filament-model-ai';
+        return 'filament-ai';
     }
 
     public function register(Panel $panel): void
     {
         $panel->pages([
-            \Devlense\ModelAi\Filament\Pages\ModelAiPage::class,
+            \Devlense\FilamentAi\Filament\Pages\FilamentAiPage::class,
         ]);
     }
 
