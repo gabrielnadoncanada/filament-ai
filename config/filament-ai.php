@@ -2,8 +2,6 @@
 
 // Configuration for Devlense/FilamentAi
 return [
-    'default_provider' => env('FILAMENT_AI_DEFAULT_PROVIDER', 'openai'),
-
     // OpenAI API Key
     'openai_api_key' => env('OPENAI_API_KEY', ''),
 
