@@ -15,7 +15,6 @@ use Filament\Infolists\Concerns\InteractsWithInfolists;
 
 class FilamentAiField extends Section
 {
-    protected string $view = 'filament-ai::components.filament-ai-field';
     private Closure|bool $disableModelSelection;
     private Closure|string $eloquentModel;
     private string|Closure $defaultModel;
